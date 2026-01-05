@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Expense Tracker - Login</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="auth-box card">
+        <h2 style="text-align: center;">Expense Tracker</h2>
+        <div class="tabs">
+            <div id="loginTab" class="tab active" onclick="toggleAuth('login')">Login</div>
+            <div id="signupTab" class="tab" onclick="toggleAuth('signup')">Sign Up</div>
+        </div>
+        <div id="authForm">
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button id="authBtn" onclick="handleAuth()">Login</button>
+        </div>
+        <p id="authMsg" style="color: red; text-align: center;"></p>
+    </div>
+    <script>
+        let mode = 'login';
+        if (localStorage.getItem('token')) window.location.href = 'dashboard.html';
+
+        function toggleAuth(m) {
+            mode = m;
+            document.getElementById('loginTab').classList.toggle('active', m === 'login');
+            document.getElementById('signupTab').classList.toggle('active', m === 'signup');
+            document.getElementById('authBtn').innerText = m === 'login' ? 'Login' : 'Sign Up';
+        }
+
+        async function handleAuth() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const url = mode === 'login' ? '/api/auth/signin' : '/api/auth/signup';
+            
+            try {
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                if (res.ok) {
+                    if (mode === 'login') {
+                        const data = await res.json();
+                        localStorage.setItem('token', data.token);
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        alert('Signup successful! Please login.');
+                        toggleAuth('login');
+                    }
+                } else {
+                    const errorText = await res.text();
+                    document.getElementById('authMsg').innerText = errorText || 'Authentication Failed';
+                }
+            } catch (e) {
+                document.getElementById('authMsg').innerText = 'Server Error';
+            }
+        }
+    </script>
+</body>
+</html>
