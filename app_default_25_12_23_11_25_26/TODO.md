@@ -1,0 +1,4 @@
+- [x] Add findByUserAndDateBetween method to ExpenseRepository.java
+- [x] Update ExpenseController.getSummary to filter expenses to current month
+- [x] Update ExpenseController.getSummary to include totalSpent, monthlyLimit, and budgetExceeded
+- [x] Update frontend to use budgetExceeded flag for notifications

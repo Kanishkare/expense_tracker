@@ -45,7 +45,23 @@ public class BudgetController {
     }
 
     @PostMapping("/category")
-    public Budget updateCategoryLimits(@RequestBody Map<Category, Double> categoryLimits) {
+    public Budget updateCategoryLimits(@RequestBody Map<String, Double> categoryLimits) {
+        User user = getAuthenticatedUser();
+        Budget budget = budgetRepo.findByUser(user).orElse(new Budget());
+        budget.setUser(user);
+        budget.setCategoryLimits(categoryLimits);
+        return budgetRepo.save(budget);
+    }
+
+    @GetMapping("/categories")
+    public Map<String, Double> getCategoryBudgets() {
+        User user = getAuthenticatedUser();
+        Budget budget = budgetRepo.findByUser(user).orElse(new Budget());
+        return (Map<String, Double>) budget.getCategoryLimits();
+    }
+
+    @PostMapping("/categories")
+    public Budget setCategoryBudgets(@RequestBody Map<String, Double> categoryLimits) {
         User user = getAuthenticatedUser();
         Budget budget = budgetRepo.findByUser(user).orElse(new Budget());
         budget.setUser(user);

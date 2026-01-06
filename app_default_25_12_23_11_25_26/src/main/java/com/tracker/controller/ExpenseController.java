@@ -10,6 +10,7 @@ import com.tracker.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,19 +50,24 @@ public class ExpenseController {
     @GetMapping("/summary")
     public Map<String, Object> getSummary() {
         User user = getAuthenticatedUser();
-        List<Expense> expenses = expenseRepo.findByUser(user);
+        LocalDate now = LocalDate.now();
+        LocalDate startOfMonth = now.withDayOfMonth(1);
+        LocalDate endOfMonth = now.withDayOfMonth(now.lengthOfMonth());
+        List<Expense> expenses = expenseRepo.findByUserAndDateBetween(user, startOfMonth, endOfMonth);
         Optional<Budget> budgetOpt = budgetRepo.findByUser(user);
         Map<String, Object> summary = new HashMap<>();
 
         Map<String, Double> categoryTotals = new HashMap<>();
+        double totalSpent = 0.0;
         for (Expense e : expenses) {
             categoryTotals.put(e.getCategory().name(), categoryTotals.getOrDefault(e.getCategory().name(), 0.0) + e.getAmount());
+            totalSpent += e.getAmount();
         }
 
         for (Category cat : Category.values()) {
             String catName = cat.name();
             Double spent = categoryTotals.getOrDefault(catName, 0.0);
-            Double limit = budgetOpt.map(b -> (Double) ((Map<String,Object>) b.getCategoryLimits()).getOrDefault(cat.name(), 0.0)).orElse(0.0);
+            Double limit = budgetOpt.map(b -> b.getCategoryLimits().getOrDefault(cat.name(), 0.0)).orElse(0.0);
             Double usagePercent = limit > 0 ? (spent / limit) * 100 : 0.0;
 
             Map<String, Double> catData = new HashMap<>();
@@ -69,6 +75,16 @@ public class ExpenseController {
             catData.put("limit", limit);
             catData.put("usagePercent", usagePercent);
             summary.put(catName, catData);
+        }
+
+        // Add total spent and budget exceedance flag
+        summary.put("totalSpent", totalSpent);
+        if (budgetOpt.isPresent() && budgetOpt.get().getMonthlyLimit() > 0) {
+            summary.put("monthlyLimit", budgetOpt.get().getMonthlyLimit());
+            summary.put("budgetExceeded", totalSpent > budgetOpt.get().getMonthlyLimit());
+        } else {
+            summary.put("monthlyLimit", 0.0);
+            summary.put("budgetExceeded", false);
         }
 
         return summary;

@@ -41,6 +41,27 @@
                     <p>Total Spent: <strong>$<span id="totalSpent">0</span></strong></p>
                     <p>Monthly Limit: <strong>$<span id="displayLimit">0</span></strong></p>
                 </div>
+                <div style="margin-top: 20px;">
+                    <h4>Category Budgets</h4>
+                    <div id="categoryBudgets">
+                        <div style="margin-bottom: 10px;">
+                            <label>Food: $<input type="number" id="foodBudget" placeholder="0"></label>
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <label>Entertainment: $<input type="number" id="entertainmentBudget" placeholder="0"></label>
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <label>Travel: $<input type="number" id="travelBudget" placeholder="0"></label>
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <label>Shopping: $<input type="number" id="shoppingBudget" placeholder="0"></label>
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <label>Other: $<input type="number" id="otherBudget" placeholder="0"></label>
+                        </div>
+                    </div>
+                    <button onclick="updateCategoryBudgets()" style="width: 100%;">Update Category Budgets</button>
+                </div>
             </div>
         </div>
 
