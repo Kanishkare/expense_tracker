@@ -1,8 +1,12 @@
 let expenseChart = null;
+let monthlyChart = null;
+let categoryChart = null;
+let incomeExpenseChart = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     loadData();
     setupForms();
+    setupNewCharts();
 });
 
 async function loadData() {
@@ -36,7 +40,7 @@ function renderChart(expenses, budgets) {
     const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'];
 
     expenseChart = new Chart(ctx, {
-        type: 'pie',
+        type: 'bar',
         data: {
             labels: categories,
             datasets: [{
@@ -46,7 +50,7 @@ function renderChart(expenses, budgets) {
             }]
         },
         options: {
-            responsive: true,
+            responsive: false,
             plugins: {
                 legend: {
                     position: 'top',
@@ -168,4 +172,183 @@ function setupForms() {
             console.error('Error updating category limits:', error);
         }
     });
+}
+
+function setupNewCharts() {
+    // Monthly Spending Chart
+    document.getElementById('monthlyYear').addEventListener('change', renderMonthlyChart);
+
+    // Category Spending Chart
+    document.getElementById('categoryYear').addEventListener('change', renderCategoryChart);
+    document.getElementById('categoryMonth').addEventListener('change', renderCategoryChart);
+
+    // Income vs Expense Chart
+    document.getElementById('incomeExpenseYear').addEventListener('change', renderIncomeExpenseChart);
+    document.getElementById('incomeExpenseMonth').addEventListener('change', renderIncomeExpenseChart);
+
+    // Initial render
+    renderMonthlyChart();
+    renderCategoryChart();
+    renderIncomeExpenseChart();
+}
+
+async function renderMonthlyChart() {
+    const year = document.getElementById('monthlyYear').value;
+    try {
+        const response = await fetch(`/api/expenses/trends/${year}`);
+        const data = await response.json();
+
+        const ctx = document.getElementById('monthlyChart').getContext('2d');
+
+        if (monthlyChart) {
+            monthlyChart.destroy();
+        }
+
+        monthlyChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.months,
+                datasets: [{
+                    label: 'Monthly Expenses',
+                    data: data.expenses,
+                    borderColor: '#36A2EB',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'Expenses: $' + context.parsed.y.toFixed(2);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error rendering monthly chart:', error);
+    }
+}
+
+async function renderCategoryChart() {
+    const year = document.getElementById('categoryYear').value;
+    const month = document.getElementById('categoryMonth').value;
+    try {
+        const response = await fetch(`/api/expenses/category-spending?year=${year}&month=${month}`);
+        const data = await response.json();
+
+        const ctx = document.getElementById('categoryChart').getContext('2d');
+
+        if (categoryChart) {
+            categoryChart.destroy();
+        }
+
+        const categories = Object.keys(data);
+        const values = Object.values(data);
+        const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'];
+
+        categoryChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: categories,
+                datasets: [{
+                    data: values,
+                    backgroundColor: colors.slice(0, categories.length),
+                    hoverBackgroundColor: colors.slice(0, categories.length).map(color => color + '80')
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': $' + context.parsed.toFixed(2);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error rendering category chart:', error);
+    }
+}
+
+async function renderIncomeExpenseChart() {
+    const year = document.getElementById('incomeExpenseYear').value;
+    const month = document.getElementById('incomeExpenseMonth').value;
+    try {
+        const response = await fetch(`/api/expenses/income-vs-expense?year=${year}&month=${month}`);
+        const data = await response.json();
+
+        const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
+
+        if (incomeExpenseChart) {
+            incomeExpenseChart.destroy();
+        }
+
+        incomeExpenseChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Income', 'Expenses'],
+                datasets: [{
+                    label: 'Amount',
+                    data: [data.income || 0, data.expenses || 0],
+                    backgroundColor: ['#4BC0C0', '#FF6384'],
+                    hoverBackgroundColor: ['#4BC0C080', '#FF638480']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': $' + context.parsed.y.toFixed(2);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error rendering income vs expense chart:', error);
+    }
 }

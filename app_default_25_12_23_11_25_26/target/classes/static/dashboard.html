@@ -9,82 +9,171 @@
 <body>
     <div class="container">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h2>Dashboard</h2>
+            <h2>Financial Trends & Visualization</h2>
             <button onclick="logout()" style="width: auto; background: #6b7280;">Logout</button>
         </div>
-        
-        <div id="budget-warning" class="warning">⚠️ BUDGET EXCEEDED!</div>
-        
-        <div class="grid">
-            <div class="card">
-                <h3>Add Expense</h3>
-                <input type="number" id="amount" placeholder="Amount ($)">
-                <select id="category">
-                    <option value="FOOD">Food</option>
-                    <option value="ENTERTAINMENT">Entertainment</option>
-                    <option value="TRAVEL">Travel</option>
-                    <option value="SHOPPING">Shopping</option>
-                    <option value="OTHER">Other</option>
-                </select>
-                <input type="date" id="date">
-                <input type="text" id="desc" placeholder="Description (Optional)">
-                <button onclick="addExpense()">Add Expense</button>
-            </div>
 
-            <div class="card">
-                <h3>Monthly Budget</h3>
-                <div style="display: flex; gap: 10px;">
-                    <input type="number" id="monthlyLimit" placeholder="Set Monthly Limit">
-                    <button onclick="updateBudget()" style="width: 120px;">Set</button>
+        <!-- Header / Filter Section -->
+        <div class="card filter-section">
+            <div style="display: flex; gap: 20px; align-items: center;">
+                <div>
+                    <label for="monthSelect">Month:</label>
+                    <select id="monthSelect">
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
                 </div>
-                <div style="margin-top: 20px;">
-                    <p>Total Spent: <strong>$<span id="totalSpent">0</span></strong></p>
-                    <p>Monthly Limit: <strong>$<span id="displayLimit">0</span></strong></p>
-                </div>
-                <div style="margin-top: 20px;">
-                    <h4>Category Budgets</h4>
-                    <div id="categoryBudgets">
-                        <div style="margin-bottom: 10px;">
-                            <label>Food: $<input type="number" id="foodBudget" placeholder="0"></label>
-                        </div>
-                        <div style="margin-bottom: 10px;">
-                            <label>Entertainment: $<input type="number" id="entertainmentBudget" placeholder="0"></label>
-                        </div>
-                        <div style="margin-bottom: 10px;">
-                            <label>Travel: $<input type="number" id="travelBudget" placeholder="0"></label>
-                        </div>
-                        <div style="margin-bottom: 10px;">
-                            <label>Shopping: $<input type="number" id="shoppingBudget" placeholder="0"></label>
-                        </div>
-                        <div style="margin-bottom: 10px;">
-                            <label>Other: $<input type="number" id="otherBudget" placeholder="0"></label>
-                        </div>
-                    </div>
-                    <button onclick="updateCategoryBudgets()" style="width: 100%;">Update Category Budgets</button>
+                <div>
+                    <label for="yearSelect">Year:</label>
+                    <select id="yearSelect">
+                        <option value="2023">2023</option>
+                        <option value="2024">2024</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                    </select>
                 </div>
             </div>
         </div>
 
-        <div class="grid">
-            <div class="card">
-                <h3>Recent Expenses</h3>
-                <div style="overflow-x: auto;">
-                    <table id="expenseTable">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Category</th>
-                                <th>Amount</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+        <!-- Budget Summary -->
+        <div class="card">
+            <h3>Budget Summary</h3>
+            <div class="grid">
+                <div class="summary-card">
+                    <h4>Total Budget</h4>
+                    <p id="totalBudget">$0.00</p>
+                </div>
+                <div class="summary-card">
+                    <h4>Budget Spent</h4>
+                    <p id="budgetSpent">$0.00</p>
+                </div>
+                <div class="summary-card">
+                    <h4>Remaining Budget</h4>
+                    <p id="remainingBudget">$0.00</p>
                 </div>
             </div>
+        </div>
+
+        <!-- Alerts Section -->
+        <div id="alerts" class="alerts" style="display: none;">
+            <div id="monthlyAlert" class="alert warning" style="display: none;">
+                Monthly budget exceeded!
+            </div>
+            <div id="categoryAlerts"></div>
+        </div>
+
+        <!-- Expense Tracking -->
+        <div class="card">
+            <h3>Add/Edit Expense</h3>
+            <div class="form-group">
+                <input type="number" id="amount" placeholder="Amount" step="0.01" required>
+                <select id="category" required>
+                    <option value="">Select Category</option>
+                    <option value="FOOD">Food</option>
+                    <option value="RENT">Rent</option>
+                    <option value="TRAVEL">Travel</option>
+                    <option value="SHOPPING">Shopping</option>
+                    <option value="UTILITIES">Utilities</option>
+                </select>
+                <input type="date" id="date" required>
+                <input type="text" id="desc" placeholder="Description">
+                <button onclick="addExpense()">Add Expense</button>
+                <button onclick="cancelEdit()" id="cancelBtn" style="display:none;">Cancel</button>
+            </div>
+        </div>
+
+        <!-- Expense List -->
+        <div class="card">
+            <h3>Expense List</h3>
+            <table id="expenseTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Expenses will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Income Tracking -->
+        <div class="card">
+            <h3>Add Income</h3>
+            <div class="form-group">
+                <input type="number" id="incomeAmount" placeholder="Amount" step="0.01" required>
+                <input type="date" id="incomeDate" required>
+                <input type="text" id="incomeDesc" placeholder="Description">
+                <button onclick="addIncome()">Add Income</button>
+                <button onclick="trackMyExpense()">Track My Expense</button>
+            </div>
+        </div>
+
+        <!-- Section 1: Monthly Spending Comparison -->
+        <div class="card">
+            <h3>Monthly Spending Comparison</h3>
+            <canvas id="monthlySpendingChart" width="300" height="200"></canvas>
+        </div>
+
+        <div class="grid">
+            <!-- Section 2: Category-wise Spending -->
             <div class="card">
-                <h3>Expense Breakdown</h3>
-                <canvas id="expenseChart" width="400" height="400"></canvas>
+                <h3>Category-wise Spending</h3>
+                <canvas id="categoryChart" width="300" height="300"></canvas>
+            </div>
+
+        <!-- Section 3: Monthly Expenses -->
+        <div class="card">
+            <h3>Monthly Expenses</h3>
+            <div style="max-width: 150px; margin: 0 auto;">
+                <canvas id="incomeExpenseChart" width="100" height="100"></canvas>
+            </div>
+        </div>
+        </div>
+
+        <!-- Optional: AI Insight Panel -->
+        <div class="card">
+            <h3>AI Insights</h3>
+            <ul style="list-style-type: none; padding: 0;">
+                <li>📈 Food expenses increased by 20% compared to last month</li>
+                <li>💰 You saved ₹4,500 this month</li>
+                <li>🎯 Suggested budget limit: ₹12,000 for better savings</li>
+            </ul>
+        </div>
+
+        <!-- Budget Section -->
+        <div class="card">
+            <h3>Set Budgets</h3>
+            <div class="budget-forms">
+                <label for="monthlyLimit">Monthly Budget:</label>
+                <input type="number" id="monthlyLimit" step="0.01">
+                <button onclick="updateBudget()">Set Monthly Budget</button>
+                <h4>Category Budgets</h4>
+                <label for="foodBudget">Food:</label>
+                <input type="number" id="foodBudget" step="0.01">
+                <label for="rentBudget">Rent:</label>
+                <input type="number" id="rentBudget" step="0.01">
+                <label for="travelBudget">Travel:</label>
+                <input type="number" id="travelBudget" step="0.01">
+                <label for="shoppingBudget">Shopping:</label>
+                <input type="number" id="shoppingBudget" step="0.01">
+                <label for="utilitiesBudget">Utilities:</label>
+                <input type="number" id="utilitiesBudget" step="0.01">
+                <button onclick="updateCategoryBudgets()">Update Category Budgets</button>
             </div>
         </div>
     </div>

@@ -10,10 +10,6 @@
 <body>
     <div class="container">
         <h1>Monthly Expense Tracker</h1>
-        <div class="chart-container">
-            <canvas id="expenseChart"></canvas>
-        </div>
-        <div id="budgetStatus"></div>
         <div class="budget-forms">
             <h2>Set Budget Limits</h2>
             <form id="totalBudgetForm">
@@ -23,10 +19,93 @@
             </form>
             <form id="categoryBudgetForm">
                 <h3>Category Limits</h3>
-                <div id="categoryLimits"></div>
+                <div id="categoryLimits">
+                    <label for="foodBudget">Food:</label>
+                    <input type="number" id="foodBudget" step="0.01" placeholder="0.00">
+                    <label for="rentBudget">Rent:</label>
+                    <input type="number" id="rentBudget" step="0.01" placeholder="0.00">
+                    <label for="travelBudget">Travel:</label>
+                    <input type="number" id="travelBudget" step="0.01" placeholder="0.00">
+                    <label for="shoppingBudget">Shopping:</label>
+                    <input type="number" id="shoppingBudget" step="0.01" placeholder="0.00">
+                    <label for="utilitiesBudget">Utilities:</label>
+                    <input type="number" id="utilitiesBudget" step="0.01" placeholder="0.00">
+                </div>
                 <button type="submit">Update Category Limits</button>
             </form>
         </div>
+        <div class="chart-container">
+            <canvas id="expenseChart" width="400" height="200"></canvas>
+        </div>
+        <div class="charts-section">
+            <div class="chart-item">
+                <h3>Monthly Spending Comparison</h3>
+                <label for="monthlyYear">Year:</label>
+                <select id="monthlyYear">
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                </select>
+                <div class="small-chart-container">
+                    <canvas id="monthlyChart" width="300" height="150"></canvas>
+                </div>
+            </div>
+            <div class="chart-item">
+                <h3>Category Spending Breakdown</h3>
+                <label for="categoryYear">Year:</label>
+                <select id="categoryYear">
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                </select>
+                <label for="categoryMonth">Month:</label>
+                <select id="categoryMonth">
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+                <div class="small-chart-container">
+                    <canvas id="categoryChart" width="300" height="150"></canvas>
+                </div>
+            </div>
+            <div class="chart-item">
+                <h3>Income vs Expense</h3>
+                <label for="incomeExpenseYear">Year:</label>
+                <select id="incomeExpenseYear">
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                </select>
+                <label for="incomeExpenseMonth">Month:</label>
+                <select id="incomeExpenseMonth">
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+                <div class="small-chart-container">
+                    <canvas id="incomeExpenseChart" width="300" height="150"></canvas>
+                </div>
+            </div>
+        </div>
+        <div id="budgetStatus"></div>
         <div id="remainingBudget"></div>
     </div>
     <script src="js/app.js"></script>
