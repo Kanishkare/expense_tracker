@@ -14,9 +14,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.PrintWriter;
 
 @RestController
 @RequestMapping("/api/expenses")
@@ -180,5 +186,41 @@ public class ExpenseController {
         data.put("income", totalIncome);
         data.put("expense", totalExpense);
         return data;
+    }
+
+    @GetMapping("/download")
+    public ResponseEntity<String> downloadExpenses() {
+        User user = getAuthenticatedUser();
+        List<Expense> expenses = expenseRepo.findByUserOrderByDateDesc(user);
+        
+        if (expenses.isEmpty()) {
+            return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=expenses.csv")
+                .contentType(MediaType.TEXT_PLAIN)
+                .body("No expenses found");
+        }
+        
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        
+        // CSV Header
+        pw.println("Date,Category,Amount,Description");
+        
+        // CSV Data
+        for (Expense expense : expenses) {
+            pw.printf("%s,%s,%.2f,%s%n",
+                expense.getDate(),
+                expense.getCategory(),
+                expense.getAmount(),
+                expense.getDescription() != null ? expense.getDescription() : "");
+        }
+        
+        pw.flush();
+        pw.close();
+        
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=expenses.csv")
+            .contentType(MediaType.TEXT_PLAIN)
+            .body(sw.toString());
     }
 }

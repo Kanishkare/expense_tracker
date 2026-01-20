@@ -4,9 +4,11 @@ C:\Users\dkani\Downloads\app_default_25_12_23_11_25_26\app_default_25_12_23_11_2
 C:\Users\dkani\Downloads\app_default_25_12_23_11_25_26\app_default_25_12_23_11_25_26\src\main\java\com\tracker\config\JwtUtils.java
 C:\Users\dkani\Downloads\app_default_25_12_23_11_25_26\app_default_25_12_23_11_25_26\src\main\java\com\tracker\repository\ExpenseRepository.java
 C:\Users\dkani\Downloads\app_default_25_12_23_11_25_26\app_default_25_12_23_11_25_26\src\main\java\com\tracker\repository\IncomeRepository.java
+C:\Users\dkani\Downloads\app_default_25_12_23_11_25_26\app_default_25_12_23_11_25_26\src\main\java\com\tracker\service\AiTipService.java
 C:\Users\dkani\Downloads\app_default_25_12_23_11_25_26\app_default_25_12_23_11_25_26\src\main\java\com\tracker\model\User.java
 C:\Users\dkani\Downloads\app_default_25_12_23_11_25_26\app_default_25_12_23_11_25_26\src\main\java\com\tracker\model\Category.java
 C:\Users\dkani\Downloads\app_default_25_12_23_11_25_26\app_default_25_12_23_11_25_26\src\main\java\com\tracker\config\SecurityConfig.java
+C:\Users\dkani\Downloads\app_default_25_12_23_11_25_26\app_default_25_12_23_11_25_26\src\main\java\com\tracker\controller\TipController.java
 C:\Users\dkani\Downloads\app_default_25_12_23_11_25_26\app_default_25_12_23_11_25_26\src\main\java\com\tracker\model\Budget.java
 C:\Users\dkani\Downloads\app_default_25_12_23_11_25_26\app_default_25_12_23_11_25_26\src\main\java\com\tracker\ExpenseTrackerApplication.java
 C:\Users\dkani\Downloads\app_default_25_12_23_11_25_26\app_default_25_12_23_11_25_26\src\main\java\com\tracker\model\Income.java

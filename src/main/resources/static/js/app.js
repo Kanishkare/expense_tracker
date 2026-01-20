@@ -1,3 +1,8 @@
+// Set Chart.js defaults for responsive behavior
+Chart.defaults.responsive = true;
+Chart.defaults.maintainAspectRatio = false;
+Chart.defaults.plugins.legend.position = 'bottom';
+
 let expenseChart = null;
 let monthlyChart = null;
 let categoryChart = null;

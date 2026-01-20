@@ -94,7 +94,12 @@
 
         <!-- Expense List -->
         <div class="card">
-            <h3>Expense List</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3>Expense List</h3>
+                <button onclick="downloadExpenses()" style="background: #10b981; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">
+                    📥 Download CSV
+                </button>
+            </div>
             <table id="expenseTable">
                 <thead>
                     <tr>
@@ -109,6 +114,14 @@
                     <!-- Expenses will be loaded here -->
                 </tbody>
             </table>
+        </div>
+
+        <!-- AI Insights -->
+        <div class="card">
+            <h3>AI Insights</h3>
+            <ul id="tipsList" style="list-style-type: none; padding: 0;">
+                <!-- Tips will be loaded here -->
+            </ul>
         </div>
 
         <!-- Income Tracking -->
@@ -145,15 +158,7 @@
         </div>
         </div>
 
-        <!-- Optional: AI Insight Panel -->
-        <div class="card">
-            <h3>AI Insights</h3>
-            <ul style="list-style-type: none; padding: 0;">
-                <li>📈 Food expenses increased by 20% compared to last month</li>
-                <li>💰 You saved ₹4,500 this month</li>
-                <li>🎯 Suggested budget limit: ₹12,000 for better savings</li>
-            </ul>
-        </div>
+
 
         <!-- Budget Section -->
         <div class="card">

@@ -195,8 +195,9 @@ function renderIncomeExpenseChart(data) {
             }]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
+            responsive: false,
+            maintainAspectRatio: true,
+            aspectRatio: 1,
             scales: {
                 y: {
                     beginAtZero: true,
@@ -538,6 +539,9 @@ async function updateCharts() {
         // Update budget summary
         loadBudgetSummary();
 
+        // Load AI tips
+        loadTips();
+
     } catch (error) {
         console.error('Error updating charts:', error);
         // Render charts with empty data on error
@@ -547,6 +551,49 @@ async function updateCharts() {
     }
 }
 
+async function loadTips() {
+    try {
+        const res = await fetch('/api/tips', { headers: getHeaders() });
+        if (res.status === 401) logout();
+        if (!res.ok) throw new Error('Failed to fetch tips');
+        const tips = await res.json();
+        const tipsList = document.getElementById('tipsList');
+        tipsList.innerHTML = tips.map(tip => `<li>${tip}</li>`).join('');
+    } catch (error) {
+        console.error('Error loading tips:', error);
+        document.getElementById('tipsList').innerHTML = '<li>Unable to load tips at this time.</li>';
+    }
+}
+
 // Initial Load
 document.getElementById('date').valueAsDate = new Date();
 loadData();
+
+async function downloadExpenses() {
+    try {
+        const res = await fetch('/api/expenses/download', {
+            headers: getHeaders()
+        });
+
+        if (!res.ok) {
+            if (res.status === 401) {
+                logout();
+                return;
+            }
+            throw new Error(`Failed to download expenses: ${res.status} ${res.statusText}`);
+        }
+
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'expenses.csv';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    } catch (error) {
+        console.error('Error downloading expenses:', error);
+        alert('Failed to download expenses. Please try again.');
+    }
+}

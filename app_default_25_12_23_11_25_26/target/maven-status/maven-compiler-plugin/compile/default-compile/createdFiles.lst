@@ -1,3 +1,4 @@
+com\tracker\controller\TipController.class
 com\tracker\repository\ExpenseRepository.class
 com\tracker\model\Expense.class
 com\tracker\model\Budget.class
@@ -17,4 +18,5 @@ com\tracker\config\SecurityConfig.class
 com\tracker\ExpenseTrackerApplication.class
 com\tracker\model\Income.class
 com\tracker\model\Category.class
+com\tracker\service\AiTipService.class
 com\tracker\config\JwtAuthenticationFilter.class
